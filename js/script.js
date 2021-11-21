@@ -3,7 +3,7 @@ var values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
 var deck = new Array();
 var players = new Array();
 var currentPlayer = 0;
-
+var inited = false;
 function sleep(delay) {
     var start = new Date().getTime();
     while (new Date().getTime() < start + delay);
@@ -27,6 +27,15 @@ function createDeck()
     }
 }
 
+function resetPlayers(num)
+{
+    for(var i = 0; i < num; i++)
+    {
+        var hand = new Array();
+        players[i].Points = 0
+        players[i].Hand = hand;
+    }
+}
 function createPlayers(num)
 {
     players = new Array();
@@ -53,8 +62,17 @@ function createPlayersUI()
         div_player.id = 'player_' + i;
         div_player.className = 'player';
         div_hand.id = 'hand_' + i;
-
-        div_playerid.innerHTML = 'Player ' + players[i].ID;
+        if (!inited){
+            let value = prompt("Enter name of " + i + " player");
+            while (value == ""){
+                value = prompt("Try again!");
+            }
+            players[i].Name = value;
+            div_playerid.innerHTML = value;
+        }else{
+            div_playerid.innerHTML = players[i].Name;
+        }
+        
         div_player.appendChild(div_playerid);
         div_player.appendChild(div_hand);
         div_player.appendChild(div_points);
@@ -77,16 +95,23 @@ function shuffle()
 
 function startblackjack()
 {
+    
     document.getElementById('btnStart').value = 'Restart';
     document.getElementById("status").style.display="none";
-
     currentPlayer = 0;
     createDeck();
     shuffle();
-    createPlayers(2);
+    if (inited){
+        resetPlayers(2);
+    }else{
+        createPlayers(2);
+    }
+    
     createPlayersUI();
+
     dealHands();
     document.getElementById('player_' + currentPlayer).classList.add('active');
+    inited = true;
 }
 
 function dealHands()
@@ -160,7 +185,9 @@ function hitMe()
 }
 
 function should_hit(dealer_total, player_total){
-    if (player_total >= 21) return false;
+    console.log(dealer_total, player_total);
+    if (dealer_total <= 10) return true;
+    else if (player_total >= 21) return false;
     else if (dealer_total > player_total && dealer_total < 21) return true; 
     else return false;
 }
