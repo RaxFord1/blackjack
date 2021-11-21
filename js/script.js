@@ -170,10 +170,11 @@ function stay()
     document.getElementById('player_' + currentPlayer).classList.remove('active');
     currentPlayer += 1;
     document.getElementById('player_' + currentPlayer).classList.add('active');
-    
-    while (should_hit(players[currentPlayer-1].Points, players[currentPlayer].Points)){
+    is_hit = should_hit(players[currentPlayer-1].Points, players[currentPlayer].Points)
+    while (is_hit){
         hitMe();
         sleep(300)
+        is_hit = should_hit(players[currentPlayer-1].Points, players[currentPlayer].Points)
     }
     end();
 }
